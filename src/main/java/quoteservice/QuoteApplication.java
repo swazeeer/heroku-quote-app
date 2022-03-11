@@ -15,7 +15,6 @@ import java.sql.*;
 
 @SpringBootApplication
 @RestController
-
 public class QuoteApplication {
 	public static Connection connection = null;
 
@@ -27,7 +26,6 @@ public class QuoteApplication {
 
 		}catch(SQLException e){
 			e.printStackTrace();
-			// exit app or something??
 		}
 
 
@@ -39,10 +37,6 @@ public class QuoteApplication {
 		return "hello world";
 	}
 
-	/*
-	close db connection when exiting ?
-	can it deal with bb.to
-	 */
 	@RequestMapping(path = "symbols/{ticker}/quotes/latest")
 	public ResponseEntity<String> latestQuote(@PathVariable("ticker") String ticker){
 		PreparedStatement preparedStatement = null;
@@ -51,7 +45,7 @@ public class QuoteApplication {
 		double ask =0;
 
 		if (ticker.length() < 2 || ticker.length() > 6){ //  invalid symbol
-			return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+			return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("invalid symbol");
 		}
 
 		try {
@@ -60,7 +54,7 @@ public class QuoteApplication {
 			rs = preparedStatement.executeQuery();
 
 			if(!rs.next()){ //valid symbol but no data
-				return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("no data for this symbol");
 			}
 
 			bid = rs.getDouble(1);
